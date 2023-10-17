@@ -76,9 +76,7 @@ def catch_exceptions(cancel_on_failure=False):
                 my_email.goLib_email_info('error')
                 if cancel_on_failure:
                     return schedule.CancelJob
-
         return wrapper
-
     return catch_exceptions_decorator
 
 
@@ -94,45 +92,6 @@ def initialization():
         usr['cookie'] = usr['cookie'].strip('\r\n')
 
 
-def queue_pass(ws):
-    # 连接socket进行排队的几种方法
-    # 第一种方法
-    # ws = websocket.WebSocket()
-    # ws.connect('wss://wechat.v2.traceint.com/ws?ns=prereserve/queue', header=queue_header)  # 这里的XXXX和Host内容是一致的
-
-    # 第二种方法
-    # ws = websocket.create_connection('wss://wechat.v2.traceint.com/ws?ns=prereserve/queue',
-    #                                  header=queue_header,
-    #                                  sslopt={"cert_reqs": ssl.CERT_NONE})
-    # if ws.connected:
-    #     print('test pass queue connect')
-    #     while True:
-    #         ws.send('{"ns":"prereserve/queue","msg":""}')
-    #         a = ws.recv()
-    #         print(a)
-    #         if a.find('u6392') != -1:  # 排队成功返回的第一个字符
-    #             break
-    #         if a.find('u6210') != -1:  # 已经抢座成功的返回
-    #             print("rsp msg:{}".format(json.loads(str(a))["msg"]))
-    #             time.sleep(5)
-    #             break
-    #         print("排队中，rsp:{}".format(a))
-    #     # 关闭连接
-    #     ws.close()
-    # time.sleep(0.01)
-    # print("排队结束。。。")
-    # print("================================")
-
-    """第三种方法"""
-    # ws = CG_Client(
-    #     url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
-    #     headers=queue_header
-    # )
-    # 在抢座开始之前就已经建立好了这个socket，节省时间
-    ws.connect()
-    ws.run_forever()
-
-
 async def queue_pass_websockets(open_time):
     """
     經過實驗，知道了，即使沒到明日預約開始的時間，仍然可以連接服務器，所以可以省下來連接服務器的時間
@@ -142,18 +101,19 @@ async def queue_pass_websockets(open_time):
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
-
     async with websockets.connect("wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
                                   extra_headers=queue_header_for_websockets,
                                   ssl=ssl_context) as websocket:
-        # 在搶座開始前0.5s就對服務器開始狂轟濫炸😝
-        start_preserve = open_time - 0.5
+        # 在搶座開始前0.3s就對服務器開始狂轟濫炸😝
+        start_preserve = open_time - 0.3
+        print('💥ready? crazy!💥')
         while True:  # 外循环控制时间
             if time.time() >= start_preserve:
                 while True:  # 内循环控制socket通信，直到收到排队成功的消息
                     try:
                         await websocket.send('{"ns":"prereserve/queue","msg":""}')
                         ans = await websocket.recv()
+                        print(ans)
                         if ans.find('u6392') != -1 or ans.find('u6210') != -1:  # 成功排队，2分钟内。。。。
                             # \u6392排好队返回的第一个字，   \u6210已经抢完座返回的第一个字
                             print(json.loads(ans)["msg"])
@@ -162,7 +122,7 @@ async def queue_pass_websockets(open_time):
                         time.sleep(0.3)
                         print(e)
                     # print("Queuing...")
-                    print(json.loads(ans)["msg"])
+                    # print(json.loads(ans)["msg"])
                 break  # 跳出外层循环
 
 
@@ -179,42 +139,26 @@ def time_update():
            + '21:00:00'
 
 
-# 开始时间
 def preserve_tomorrow(session, usr: dict):
     # 更新cookie
     cookie = usr['cookie']
     # websocket的请求头的形式 => dict
     queue_header_for_websockets['Cookie'] = cookie
-    # ws4py的请求头的形式 => tuples list
-    # queue_header.append(('Cookie', cookie))
     # http请求的请求头
     pre_header['Cookie'] = cookie
 
     # 更新为当日抢座时间,open_time -> 时间戳
     open_time = time.mktime(time.strptime(time_update(), "%Y-%m-%d %H:%M:%S"))
-    # 时间戳转换成localtime,
-    # 形如：time.struct_time(tm_year=2023, tm_mon=9, tm_mday=25, tm_hour=12, tm_min=22, tm_sec=18,tm_wday=0, tm_yday=268, tm_isdst=0)
-    # 转换成新的时间格式(2016-05-05 20:28:54)
     print('🙏明日预约初始化完成！')
-    print('当前时间：', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())), end=', ')
+    print('当前时间', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())), end=', ')
     print('还有%f秒开始' % (open_time - time.time()))
-    # # 先建立一个socket
-    # ws = CG_Client(
-    #     url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
-    #     headers=queue_header
-    # )
+    # 用一个变量保存开始的时间，避免每一次的循环中都要计算open_time - 2
+    start_preserve_time = open_time - 2
     while True:
-        if time.time() >= open_time:
-            # print(time.time(), "⏰时间到，准备开始抢座!")
-            # start_time = time.time()
-            """ws4py"""
-            # # 排队！直接省去函数调用！
-            # # queue_pass(ws)
-            # ws.connect()
-            # ws.run_forever()
-            """websockets"""
+        if time.time() >= start_preserve_time:  # 提前2.5s开始，建立socket，然后直接排队
+            """websockets, asyncio"""
             asyncio.run(queue_pass_websockets(open_time))
-            # print(time.time(), '🚥queue ==> ok!')
+            queue_end = time.time()
             try:
                 for seat in the_seat_chosen:
                     # 重要！如果不是放在常用座位，需要先请求对应的阅览室的所有座位，libLayout！！
@@ -233,57 +177,43 @@ def preserve_tomorrow(session, usr: dict):
                         json=params_confirm_seat,  # save
                         verify=False
                     ).text
-                    # print('⏰time when start queue:            ', start_time)
-                    # print('⏰time consumption in queue:        ', queue_time - start_time)
-                    print('🚒save  ==> ok!')
-                    # print('⏰time consumption to preserve seat:', time.time() - queue_time)
-                    # print(res.text)
+                    print('🚒save ==> ok!')
                     text_res = session.post(
                         url=url,
                         headers=pre_header,
                         json=params_confirm_seat_info,  # prereserve
                         verify=False
                     ).text
+                    save_end = time.time()
+                    print('⛳本次排队消耗时间:', queue_end - open_time)
+                    print('🌻抢座过程消耗时间:', save_end - queue_end)
                     print(time.ctime(), 'pre reserve:', str(text_res).encode('utf-8').decode('unicode_escape'))
                     print(time.ctime(), 'save       :', str(text_save).encode('utf-8').decode('unicode_escape'))
 
-                    # if str(text_save).count("true") and text_res.count('user_mobile'):
                     if text_res.count('user_mobile'):
                         # 抢座成功就返回
-                        print("😍恭喜你！明日预约成功！记得早起")
-                        # queue_header.pop()
+                        print('🐮🍺🐮🍺🐮🍺🐮🍺🐮🍺🐮🍺')
+                        print("🐮恭喜你！明日预约成功！记得早起🍺")
+                        print('🐮🍺🐮🍺🐮🍺🐮🍺🐮🍺🐮🍺')
                         try:
                             my_email.goLib_email_info('success', json.loads(text_res))
                         except Exception as e:
                             print(e)
-                            print('获取每日诗词失败。。。')
+                            print('获取每日诗词失败或发送邮件失败。。。')
                         return True
                     else:
-                        # ws = CG_Client(
-                        #     url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
-                        #     headers=queue_header
-                        # )
-                        # 连续两次抢座之间间隔至少1s。。。。
                         time.sleep(1)
             except Exception as e:
                 time.sleep(0.3)
                 print(e)
             break
     # 抢座失败的通知
-    # queue_header.pop()
+    print(time_update().split(' ')[0] + "的抢座结束！")
     my_email.goLib_email_info('fail')
     return False
 
 
-def keep_pre_reserve(session, usr):
-    # 重复3次！
-    for i in range(0, 1):
-        if preserve_tomorrow(session=session, usr=usr):
-            break
-    print(time_update().split(' ')[0] + "的抢座结束！")
-
-
-# @catch_exceptions(cancel_on_failure=False)
+@catch_exceptions(cancel_on_failure=True)
 def run_thread(param_dict):
     """
     schedule每一次重新運行的時候，會保留上一次的更改，包括schedule所執行的函數的形參的變化，都會一直保留……
@@ -324,11 +254,6 @@ if __name__ == '__main__':
         # 暂时---只给自己自动抢座
         'usr': usr_list[0]
     })
-    # schedule.every().day.at("20:59:00").do(run_thread, {
-    #     'func': preserve_tomorrow,
-    #     'session': session,
-    #     'file_name': 'cookie_me.txt'
-    # })
 
     while True:
         schedule.run_pending()
