@@ -1,2 +1,8 @@
 # igoLib-auto
-You know, I'm going to the library, bro.And I want my sssssssssseat. 
+brand new v3.0!
+
+## compatible for mutil users, 
+advanced by an attemp to prereserve sear for a HUEL-er, thx a lot.
+
+
+
