@@ -25,6 +25,10 @@ queue_header = [
 ]
 
 
+def print_que():
+    print(queue_header)
+
+
 def socket_key_random():
     # 生成16字节的随机值
     random_bytes = os.urandom(16)
@@ -39,6 +43,8 @@ class CG_Client(WebSocketClient):
     open_time = None
     queue_start_time = None
     queue_end_time = None
+    cnt = 0
+    recv = 0
 
     def opened(self):
         while True:
@@ -46,14 +52,18 @@ class CG_Client(WebSocketClient):
             # 在open_time的前后0.n s内持续发送排队消息。
             while self.queue_start_time <= time.time() <= self.open_time:
                 # 连发
-                self.send('{"ns":"prereserve/queue","msg":""}')
-                print('msg already sent to server', time.time())
-                time.sleep(0.01)
+                self.cnt += 1
+                self.send('{"ns":"prereserve/queue","msg":""}' + time.time().__str__())
+                print(self.cnt, 'self.cnt|||==msg1 already sent to server', time.time())
+                time.sleep(0.02)
             else:
                 # 持续时间过了之后，每次只发送一次消息
-                if time.time() >= self.open_time:
-                    self.send('{"ns":"prereserve/queue","msg":""}')
-                    print('msg2 already sent to server', time.time())
+                print()
+                if time.time() >= self.open_time + 1:
+                    self.cnt += 1
+                    self.send('{"ns":"prereserve/queue","msg":""}' + time.time().__str__())
+                    print(self.cnt, 'self.cnt|||===msg2 already sent to server', time.time())
+                    time.sleep(0.02)
                     break
 
     def closed(self, code, reason=None):
@@ -65,8 +75,9 @@ class CG_Client(WebSocketClient):
         # unicode转utf-8
         # resp_msg = bytes(str(r"%s" % resp), 'utf-8').decode('unicode_escape')
         # print(resp_msg)
+        self.recv += 1
         resp_msg = str(resp)
-        print('received:', resp_msg, time.time())
+        print(self.recv, 'self.recv|||===received:', resp_msg)
         if resp_msg.find('u6392') != -1:  # 排队成功返回的第一个字符
             print('time consumption in queue:', time.time() - self.open_time)
             print('queue over')
@@ -75,8 +86,10 @@ class CG_Client(WebSocketClient):
         #     print("rsp msg:{}".format(json.loads(resp_msg)["msg"]))
         #     self.close()
         #     time.sleep(1)
+
         else:
-            self.opened()
+            pass
+            # self.opened()
 
 
 if __name__ == '__main__':
@@ -84,20 +97,19 @@ if __name__ == '__main__':
 
     try:
         ws = CG_Client(
-            url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
-            headers=queue_header
+            url="ws://localhost:8765"
             # ssl_options={'ssl': ssl_context}
             # ssl_options={}
         )
         now = time.time()
-        ws.open_time = now + 1
         ws.queue_start_time = now
+        ws.open_time = now + 2
+
         # ws.queue_end_time = now + 0.3
         print(ws.open_time)
 
         cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMyNjcxMzA3LCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5ODM0MDQ2OX0.p_MI29odP9kd6HLxQ2zPg1OxyrJAVxhNrkQl28i54iVOd10Hz8js0uJoei7MLGW0C3mvddsMSdldOeBllbRkeLTT17kP5gtHFZ_9XoUEPU4Wh6CdYy0m6cwO3sI5MP4PQiqUrGcvGHNNk8NzS1Sm2kW-MCj2mPHy4zCWwSTvJAFIVq9lym1OBE-6BudvwKTYhTtvrJiSkFnnnEfy6yeWWqhHMrgifTHDT88X92KRQMg4AfUM8-mUEJlpoUw6iOGUyP9wRqHmfeSsh8G7rxHhWw1ShVnqjecE-QiPjJL7GfXshr8YzR2gzAXZ-Es1Ul_m0tw5ea8PaZAuaV6rgK6v2A; SERVERID=d3936289adfff6c3874a2579058ac651|1698333269|1698333269'
 
-        queue_header.append(('Cookie', cookie))
         # time.sleep(5)
         # asyncio.run(queue_pass(ws))
         print('=============================')

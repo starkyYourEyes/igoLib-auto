@@ -36,7 +36,7 @@ def main():
     code = get_code(url)
     print(code)
     cookie_string = get_cookie_string(code)
-    print("\nCookie string: \n")
+    print("Cookie string: \n")
     print(cookie_string)
 
 

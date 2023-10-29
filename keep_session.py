@@ -27,7 +27,7 @@ def get_newest_cookie_by_txt(file_name='cookie_me.txt'):
 def keep_session_newest(session, usr_list):
 
     for usr in usr_list:
-        if usr['name'] != "" and usr["cookie"] != "":
+        if usr["cookie"] != "":
             cookie = http.cookies.SimpleCookie()
             cookie.load(usr['cookie'])
             for key, morsel in cookie.items():
@@ -56,7 +56,7 @@ def keep_session_newest(session, usr_list):
                 print("😥Session expired!😥", usr['email'])
                 my_email.goLib_email_info('SessionError')
             else:
-                print(f"✅Session OK.✅: {usr['email']}", time.ctime())
+                print(f"✅Session OK.✅: {usr['email'] if usr['email'] is not None and usr['email'] != '' else usr['tel']}", time.ctime())
                 # if file_name.count('me'):
                 #     print("✅Z's Session OK.✅ ", time.ctime())
                 # else:

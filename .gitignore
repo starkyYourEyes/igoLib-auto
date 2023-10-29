@@ -1,8 +1,8 @@
 # dir 不需要提交的目录
 .idea
 /__pycache__
-scks_client.py
-scks_server.py
+sockets_demos/scks_client.py
+sockets_demos/scks_server.py
 *demo*.py
 *demo*.ipynb
 # file 不需要提交的文件
