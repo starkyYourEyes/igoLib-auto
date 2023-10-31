@@ -1,0 +1,23 @@
+{
+    "users": [{
+        "name": "上山未归",
+        "cookie": "",
+        "email": "1710680337@qq.com",
+        "tel": 18237569900,
+        "session": null,
+        "pre_reserve_time": "19:59:58",
+        "close_lib_time": "22:29:30",
+        "lib_id": 10086,
+        "seats": ["341", "333", "323", "342", "340"]
+    },{
+        "name": "myself",
+        "cookie": "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5ODc2OTAyN30.unK4CZ_OJO_z7YechIeDiaR8yCXncmeP-lbMo10dj1dzUNbIeW_yZgcssbZx36f6CaZKZ6GitzJZ-3DWvIo_IrEi-OLpwu7cxAiGAL53GdXlMsBOFavUnEJ84Z-m5qwKZdDO6syCnrdhoFukv77ri8n4D3Df17tq9oMdgLYkfOVWW2jsicXkPqo-PtdT1f1RnkzU9IVSqi_Eko8yE2uwRHcpGVC-2Yx7PXg896SHKcSTZLBiMONTp8VvBZ6M3NmHVHbkrXOe_pPEhzSMdCjB0K03INmw_KgvgcT2Bja34qXO-SKdMCGidyKJ7UJR7kgiMD8pdoYgodtM01x_n0AwCA; SERVERID=82967fec9605fac9a28c437e2a3ef1a4|1698766152|1698756636; SERVERID=d3936289adfff6c3874a2579058ac651|1698754761|1698754756",
+        "email": "2389372927@qq.com",
+        "tel": 18552235831,
+        "pre_reserve_time": "21:00:00",
+        "close_lib_time": "21:59:30",
+        "lib_id": 491,
+        "seats": ["70", "49", "44"]
+    }]
+}
+
