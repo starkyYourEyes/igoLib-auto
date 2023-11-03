@@ -1,0 +1,22 @@
+{
+    "users": [{
+        "name": "lsy",
+        "cookie": "",
+        "email": "3079287773@qq.com",
+        "tel": 11111111,
+        "pre_reserve_time": "21:00:00",
+        "close_lib_time": "21:59:30",
+        "lib_id": 491,
+        "seats": ["38", "39", "40"]
+    },{
+        "name": "myself",
+        "cookie": "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5OTAxMDY5Mn0.ao3u-f2jdvsHdatFySSeREX8eGlL9etT8sbnoLgu254K_LBm1tX5YJnUTHKOcH2kESofhqnnd8scCcxzf7D_R4Rex0Vxw1HVen4IcU69TWtKBm9XMm8t-0gY6Hte15t54Gg09ySSVK1qwUO9YavFE5Zgk7fdHSaREHOymfTNSskgzRi3yHF2QuskYSLgyZwXa-y1P6vAZpXWa2XKJcL3_05pIP2QViN14iZSxc8LYhSSQ6xDrCXdVsxAgOxl7j_yYvgN4h_ljxb9m7YQXET2nmT1m-XUUY2XX0Tqy0InhMCqUEdZoPanFIzG7z7tmLKBAEi_qamgU2BEwmo1fi1J8Q; SERVERID=d3936289adfff6c3874a2579058ac651|1699003492|1699003492\n",
+        "email": "2389372927@qq.com",
+        "tel": 18552235831,
+        "pre_reserve_time": "21:00:00",
+        "close_lib_time": "21:59:30",
+        "lib_id": 491,
+        "seats": ["49", "48"]
+    }]
+}
+
