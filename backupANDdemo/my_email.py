@@ -28,12 +28,10 @@ def daily_poem():
     title = tree.xpath('//*[@id="app"]/div/main/div[1]/div[1]/h2/a/text()')[0]
     author = "".join(tree.xpath('//*[@id="app"]/div/main/div[1]/div[1]/div[2]//text()'))
     content = tree.xpath('//*[@id="app"]/div/main/div[1]/div[1]/div[3]/text()')[0]
-    ct_date = tree.xpath('//*[@id="app"]/div/main/div[1]/div[1]/div[1]/div[2]/text()')[0]
     return {
         "title": title,
         "author": author,
-        "content": content,
-        "date": ct_date
+        "content": content
     }
 
 
@@ -43,14 +41,15 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
     receiver = receiver if receiver is not None and receiver.strip(' ') != "" else '2389372927@qq.com'
     regex = re.compile(r'[1-9]\d+@qq.com')  # 默认为qq邮箱
     if not re.fullmatch(regex, receiver):
-        print(receiver, "this receiver string is invalid qqmail address!")
+        print("receiver is invalid qqmail address!")
         receiver = '2389372927@qq.com'
 
-    time.sleep(6 * random.random())
+    time.sleep(8 * random.random() + 2)
     host_server = 'smtp.qq.com'  # qq邮箱smtp服务器
 
+    """！收发人信息！"""
     sender_qq = '2389372927@qq.com'  # 发件人邮箱 2389372927@qq.com
-    pwd = 'omnafobylbzfeaci'  # 2389372927 smtp 密钥
+    pwd = 'omnafobylbzfeaci'  # 2389372927
 
     mail_title = '你去图书馆——明日预约'  # 邮件标题
     seat_info = '预约信息: '
@@ -66,17 +65,9 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
         mail_content = f"""
         <html class="h-screen " lang="zh-">
         <meta charset="utf-8" />
-        <div style="display: flex; font-size: 16px">
-            <div style="width: 50%">
-            恭喜，明日预约成功！
-            </div>
-            <div style="width: 50%; text-align: right; font-weight: bold">
-            {con['date']}
-            </div>
-        </div>
-        <br>
+        恭喜，明日预约成功！<br>
         {seat_info}
-        <div>
+        <div class="text-center card">
           <p style="text-align:center; font-size:21px; font-family:STKaiti,serif">
             {con['title']}
           </p> 
@@ -117,7 +108,4 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
 
 
 if __name__ == '__main__':
-
     goLib_email_info('success', '123')
-    time.sleep(0.4)
-    # goLib_email_info('success', '123')

@@ -131,6 +131,10 @@ def preserve_tomorrow(user: User):
     start_preserve_time = open_time - 5
     save_success = False
     save_round = 0
+    cnt_except = 0
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
     while True:
         if time.time() >= start_preserve_time:  # 提前4s开始，建立socket，然后直接排队
             my_queue_header = copy.deepcopy(queue_header)
@@ -142,8 +146,7 @@ def preserve_tomorrow(user: User):
                     url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
                     headers=my_queue_header,
                     ssl_options={
-                        "cert_reqs": ssl.CERT_NONE,
-                        "ssl_version": ssl.PROTOCOL_SSLv23
+                        "cert_reqs": ssl.CERT_NONE
                     }
                 )
                 # ws.open_time = open_time
@@ -164,14 +167,17 @@ def preserve_tomorrow(user: User):
                 save_round += 1
                 save_success = seat_save(open_time, user)
             except Exception as e:
+                cnt_except += 1
                 print(e)
                 time.sleep(0.3)
             finally:
                 while my_queue_header[-1][0] == 'Cookie':
                     my_queue_header.pop()
-                if save_success or save_round >= 3:
+                if save_success or save_round >= 3 or cnt_except >= 8:
                     break
     print(user.name, time_update().split(' ')[0] + "的抢座结束！")
+    if not save_success:
+        my_email.goLib_email_info('fail', receiver='2389372927@qq.com')
 
 
 @catch_exceptions(cancel_on_failure=True)

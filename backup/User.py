@@ -48,7 +48,7 @@ class User:
             if result.get("errors") and result.get("errors")[0].get("code") != 0:
                 print("result: ", result)
                 print("😥Session expired!😥")
-                my_email.goLib_email_info('SessionError')
+                my_email.goLib_email_info('SessionError', )
             else:
                 print(f"✅{user.name} Session OK✅,", time.ctime())
 

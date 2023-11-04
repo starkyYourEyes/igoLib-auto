@@ -6,7 +6,7 @@ then    # kill the igoLib if it's running
 else
         echo -e "\e[1;31m an error occured in close igoLib! igoLib maybe is not running now! \e[0m"
 fi
-cd /www/wwwroot/python/igoLib/
+cd /www/wwwroot/python/igoLib/ || exit
 nohup /www/server/pyporject_evn/versions/3.10.0/bin/python3.10 -u /www/wwwroot/python/igoLib/preserve_seat_tomorrow_ws4py.py >> igoLibLog.log 2>&1 &
 # judge whether error when start (maybe cuz session expired)
 sleep 0.5

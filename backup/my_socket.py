@@ -2,7 +2,10 @@ import json
 from ws4py.client.threadedclient import WebSocketClient
 import websocket
 import ssl
+import base64
+import os
 import time
+import asyncio
 
 
 queue_header = [
@@ -18,42 +21,54 @@ queue_header = [
     ('Sec-WebSocket-Extensions', 'permessage-deflate; client_max_window_bits'),
     # ('Sec-WebSocket-Key', 'J5PSBxALx6TJAVyRXIhl0g=='), # 这个东西是socket通信自带的，不需要自己加
     ('Sec-WebSocket-Version', '13')
+
 ]
+
+
+def socket_key_random():
+    # 生成16字节的随机值
+    random_bytes = os.urandom(16)
+    # 使用base64编码
+    return base64.b64encode(random_bytes).decode('utf-8')
+    # print("Sec-WebSocket-Key:", sec_websocket_key)
 
 
 class CG_Client(WebSocketClient):
 
-    # open_time = None
+    # self.open_time = 21:00
+    open_time = None
     queue_start_time = None
     queue_end_time = None
-    user_name = None
-    sent, revc = 0, 0
 
     def opened(self):
-        while True:  # 到达开始排队的时间以及持续排队的时间
-            while self.queue_start_time <= time.time() <= self.queue_end_time:
-                # 连发，在open_time的前后0.n s内持续发送排队消息。
+        while True:
+            # 到达开始排队的时间以及持续排队的时间
+            # 在open_time的前后0.n s内持续发送排队消息。
+            while self.queue_start_time <= time.time() <= self.open_time:
+                # 连发
                 self.send('{"ns":"prereserve/queue","msg":""}')
-                self.sent += 1
-                print(self.sent, f'{self.user_name} >>> msg1', time.time())
-                time.sleep(0.02)
+                print('msg already sent to server', time.time())
+                time.sleep(0.01)
             else:
                 # 持续时间过了之后，每次只发送一次消息
-                if time.time() > self.queue_end_time:
+                if time.time() >= self.open_time:
                     self.send('{"ns":"prereserve/queue","msg":""}')
-                    self.sent += 1
-                    print(self.sent, f'{self.user_name} >>> msg2', time.time())
+                    print('msg2 already sent to server', time.time())
                     break
 
     def closed(self, code, reason=None):
-        print(f"{self.user_name}'s socket closed down:", code, reason)
+        # print("socket closed down:", code, reason)
+        pass
 
     def received_message(self, resp):
+        # print('type(resp1):', type(resp))  # type(resp) => class 'ws4py.messaging.TextMessage'
+        # unicode转utf-8
+        # resp_msg = bytes(str(r"%s" % resp), 'utf-8').decode('unicode_escape')
+        # print(resp_msg)
         resp_msg = str(resp)
-        self.revc += 1
-        self.sent -= 1
-        print(self.revc, f'{self.user_name} <<<', resp_msg, time.time())
+        print('received:', resp_msg, time.time())
         if resp_msg.find('u6392') != -1:  # 排队成功返回的第一个字符
+            print('time consumption in queue:', time.time() - self.open_time)
             print('queue over')
             self.close()
         # elif resp_msg.find('u6210') != -1:  # 已经抢座成功的返回
@@ -61,34 +76,26 @@ class CG_Client(WebSocketClient):
         #     self.close()
         #     time.sleep(1)
         else:
-            if self.sent < 1:
-                self.send('{"ns":"prereserve/queue","msg":""}')
-                print(f'{self.user_name} >>> msg2', time.time())
+            self.opened()
 
 
 if __name__ == '__main__':
     ws = None
-    cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5ODkzOTAxNX0.KPLqGahl8cq0fGq0b4H1IE8N3xwmJbRpDbcU67I3fzlBzFskB0SOGaNyPPzw1RfsHLFw89fTCri_YUjcY9ZKFDYXzruiyZRA44eU-SQuZIvs8yp8qw9Be36CiS-sZH09BfqsU9y9OsAXfJ182qbqOWqO-G1PQ6raWL8Blj4n9FV7bk-10Y-si1PaRHJo2HSra_U9iZ0dI_VeJe5ZQQur77tXEKWhrHHUjH3cO7g6e3tqLXcBuD-nPcZCA2yRiBh01VHEyRJegfXT6pRqvgEPF_UV_x7HyONT9XPhGOZL9n06MM1gLlPHYxLJVHrAaH6y4nwD98a5IDM8aXkyvYO2pA; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1698931820|1698931815'
 
     try:
-        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
-        queue_header.append(('Cookie', cookie))
         ws = CG_Client(
-            "wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
-            headers=queue_header,
-            ssl_options={
-                "cert_reqs": ssl.CERT_NONE,
-                "ssl_version": ssl.PROTOCOL_SSLv23
-            }
+            url="wss://wechat.v2.traceint.com/ws?ns=prereserve/queue",
+            headers=queue_header
+            # ssl_options={'ssl': ssl_context}
+            # ssl_options={}
         )
-        # ws.ssl_options = ssl_context
         now = time.time()
-        # ws.open_time = now + 1
+        ws.open_time = now + 1
         ws.queue_start_time = now
-        ws.user_name = 'hhh'
-        ws.queue_end_time = now + 0.5
+        # ws.queue_end_time = now + 0.3
+        print(ws.open_time)
+
+        cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMyNjcxMzA3LCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5ODM0MDQ2OX0.p_MI29odP9kd6HLxQ2zPg1OxyrJAVxhNrkQl28i54iVOd10Hz8js0uJoei7MLGW0C3mvddsMSdldOeBllbRkeLTT17kP5gtHFZ_9XoUEPU4Wh6CdYy0m6cwO3sI5MP4PQiqUrGcvGHNNk8NzS1Sm2kW-MCj2mPHy4zCWwSTvJAFIVq9lym1OBE-6BudvwKTYhTtvrJiSkFnnnEfy6yeWWqhHMrgifTHDT88X92KRQMg4AfUM8-mUEJlpoUw6iOGUyP9wRqHmfeSsh8G7rxHhWw1ShVnqjecE-QiPjJL7GfXshr8YzR2gzAXZ-Es1Ul_m0tw5ea8PaZAuaV6rgK6v2A; SERVERID=d3936289adfff6c3874a2579058ac651|1698333269|1698333269'
 
         queue_header.append(('Cookie', cookie))
         # time.sleep(5)
