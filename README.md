@@ -3,3 +3,6 @@
 - 涉及到多线程，注意共享的资源！共享资源要进行深拷贝!(11.2翻车原因)
 - 两个websocket库的使用。。
 - Linux shell中的启动，关闭和重启项目的脚本
+
+### 未知bug。。。
+SSLError: SSL validation failed ... EOF occurred in violation of protocol #3359 
