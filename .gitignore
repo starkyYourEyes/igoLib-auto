@@ -1,0 +1,14 @@
+# dir 不需要提交的目录
+.idea
+backupANDdemo/sockets_demos/scks_client.py
+backupANDdemo/sockets_demos/scks_server.py
+*demo*
+*demo*
+# file 不需要提交的文件
+#config.ini
+
+# log 不需要提交的任意包含后缀名为log的文件
+#*.log
+
+# Package Files 不需要提交的任意包含后缀名为jar的文件
+#*.jar

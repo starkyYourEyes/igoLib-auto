@@ -1,0 +1,19 @@
+{
+    "users": [{
+        "name": "myself",
+        "cookie": "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5ODY1OTM2MH0.d7uhcjq2AaB65xsDV-hLDJsDxJIhtueDgKocKSeRm3EpF1hG_Jl3qfbSf4stmV1mVLAjzDJlpnHXFpvt8VmBH7xqaGjQiy20Hqj4wTL1J9u1Anhv-Xvozr2dSUpD5z1WMuqqEw3jTVLv4KoSLofsu1JzlAsvIIiX75fDBJnEK5bzC_AP0Lmv8ee0s0Z4N-9v1g4Qp5ePkj_hjA13NbS-nhjmSQLwRetyqp0LX7RDwG9Cty6nmcfiW4SVSU4Ub0n9VMIHNLMqFzMbYKCLTxqPZOb9hJvUZUa6Nlctum660GFQEIHNqObxPT9OuTfLLNqcKPkcf7mh5NO3RWi6H9LO5A; SERVERID=d3936289adfff6c3874a2579058ac651|1698652165|1698652159\n",
+        "email": "2389372927@qq.com",
+        "tel": 18552235831,
+        "pre_reserve_time": "21:00:00",
+        "close_lib_time": "21:59:30",
+        "lib_id": 491,
+        "seats": ["70", "49", "44"]
+    },{
+        "name": "myself",
+        "cookie": "",
+        "email": "",
+        "tel": 185,
+        "pre_reserve_time": "21:00:00",
+        "close_lib_time": "21:59:30"
+    }]
+}
