@@ -127,9 +127,7 @@ def preserve_tomorrow(user: User):
     save_success = False
     save_round = 0
     cnt_except = 0
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
+
     while True:
         if time.time() >= start_preserve_time:  # 提前4s开始，建立socket，然后直接排队
             my_queue_header = copy.deepcopy(queue_header)
@@ -145,8 +143,6 @@ def preserve_tomorrow(user: User):
                     }
                 )
                 # ws.open_time = open_time
-                ws.queue_start_time = open_time - 0.6
-                ws.queue_end_time = open_time + 0.1
                 ws.user_name = user.name
                 my_libLayout_operation = copy.deepcopy(libLayout_operation)
                 my_libLayout_operation['variables']['libId'] = user.lib_id

@@ -1,3 +1,5 @@
+import json
+
 from ws4py.client.threadedclient import WebSocketClient
 import ssl
 import time
@@ -21,52 +23,36 @@ queue_header = [
 
 class CG_Client(WebSocketClient):
 
-    # open_time = None
-    queue_start_time = None
-    queue_end_time = None
     user_name = None
-    sent, revc = 0, 0
+    revc = 0
 
     def opened(self):
-        while True:  # 到达开始排队的时间以及持续排队的时间
-            while self.queue_start_time <= time.time() <= self.queue_end_time:
-                # 连发，在open_time的前后0.n s内持续发送排队消息。
-                self.send('{"ns":"prereserve/queue","msg":""}')
-                self.sent += 1
-                print(self.sent, f'{self.user_name} >>> msg1', time.time())
-                time.sleep(0.01)
-            else:
-                # 持续时间过了之后，每次只发送一次消息
-                if time.time() > self.queue_end_time:
-                    self.send('{"ns":"prereserve/queue","msg":""}')
-                    self.sent += 1
-                    print(self.sent, f'{self.user_name} >>> msg2', time.time())
-                    break
+        self.send('{"ns":"prereserve/queue","msg":""}')
+        print(f'{self.user_name} >>> msg', time.time())
 
     def closed(self, code, reason=None):
         print(f"{self.user_name}'s socket closed down:", code, reason)
 
     def received_message(self, resp):
-        resp_msg = str(resp)
         self.revc += 1
-        self.sent -= 1
+        resp_msg = str(resp)
         print(self.revc, f'{self.user_name} <<<', resp_msg, time.time())
-        if resp_msg.find('u6392') != -1 or self.revc >= 666:  # 排队成功返回的第一个字符
+        if resp_msg.find('u6392') != -1 or self.revc >= 185:  # 排队成功返回的第一个字符
             print('queue over')
             self.close()
-        # elif resp_msg.find('u6210') != -1:  # 已经抢座成功的返回
-        #     print("rsp msg:{}".format(json.loads(resp_msg)["msg"]))
-        #     self.close()
-        #     time.sleep(1)
+        elif resp_msg.find('u6210') != -1:  # 已经抢座成功的返回
+            print("rsp msg:{}".format(json.loads(resp_msg)["msg"]))
+            self.close()
+            time.sleep(1)
+        elif resp_msg.find('u83b7') != -1:  # 获取用户信息失败！？
+            self.close()
         else:
-            if self.sent < 1:
-                self.send('{"ns":"prereserve/queue","msg":""}')
-                print(f'{self.user_name} >>> msg2', time.time())
+            self.opened()
 
 
 if __name__ == '__main__':
     ws = None
-    cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjM0Mzc3NTkxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5OTE5MzUxMX0.v-mTMsWbFrMQ1H7jv-zQmxD41mfqwy4sEfMt0FL6_LJfScrH9RwIdfwavyW5cOjkEOG_-oXooXzFvbLLiXYaVAibHHC7GjqAqoaP5hAkMDYcTiCPK5FMblDGuAOzWZN66a9gcdnL9wR0Vpe5MFZBGxf8kLM0Lqk-jgCdjgMRL5N1QamyD9yOp5kUiuI8YiCjMzLZ1T_pW85QHRoRidTtP-icwa251r5ghSbWsMiYlBqSax9vZM3D3Tj3f77kWi5VvJdvXzeSs8bUAu4ScHTo4Hn1i5wM8gUqfzTfJzgwX5JtyF0k5_3Tc3OcthVavvtEpDWDDYP3Jg-xWTh3ZRWsmQ; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1699186316|1699186310'
+    cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5OTk3NTAxOX0.H_2EOQhUXn_CChFanFm7PG2R4lI0CjsHU9oe4sg6mk5onJ5tlXa7MbACwSDvOCJNSEM55o1hXY9SV_o3Pi-vw1H8gQkzkOlTQsiJfXVKELIdWrDUQ2SiLiKVRu2f-qD3XOu2cGyruKOHeaHMWvWRvS_EMPzmg6xNfngKAT0ysQC-HZFWTyvdNNRLJ28OoRaLyULT-85H2FhKIJrsrDz-bkSotIJoT5xJQK_qgtydhIM4to1cyyVBbexzc6oceh9uHEPriq-kRNcqtELNsbyaZipSmEXBFyHAcO4X2TwBvoIYGeuy2KHGGG2fDgosB1krkud55B4O5ZFm2JxOX9oiMQ; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1699967819|1699707589'
 
     try:
         queue_header.append(('Cookie', cookie))
@@ -79,9 +65,7 @@ if __name__ == '__main__':
         )
         now = time.time()
         # ws.open_time = now + 1
-        ws.queue_start_time = now
         ws.user_name = 'hhh'
-        ws.queue_end_time = now + 0.5
 
         queue_header.append(('Cookie', cookie))
         # time.sleep(5)
@@ -146,16 +130,3 @@ if __name__ == '__main__':
     # print("================================")
     # except KeyboardInterrupt:
     #     ws.close()
-
-# if __name__ == '__main__':
-#     ws = CG_Client(
-#         url="ws://localhost:8765"
-#         # headers=queue_header
-#         # ssl_options={}
-#     )
-#     ws.open_time = time.time() + 0.5
-#     ws.queue_start_time = time.time()
-#     ws.queue_end_time = ws.open_time + 0.5
-#     ws.connect()
-#     ws.run_forever()
-
