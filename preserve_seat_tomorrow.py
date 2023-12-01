@@ -163,6 +163,7 @@ async def queue_pass_websockets(open_time, user):
             if time.time() >= start_queue_time:
                 while True:  # 内循环控制websocket通信，直到收到排队成功的消息
                     try:
+                        time.sleep(0.08)
                         await websocket.send('{"ns":"prereserve/queue","msg":""}')
                         print(name, '>>> msg', time.time())
                         ans = await websocket.recv()
@@ -177,8 +178,8 @@ async def queue_pass_websockets(open_time, user):
                             print(ans)
                         elif ans.find('u83b7') != -1:  # 获取用户信息失败！？
                             my_email.goLib_email_info('error')
-
-                        if success_pre_reserve or save_round >= 3 or cnt_recv >= 185:  # 抢座成功或者抢座超过3轮直接退出
+                            break
+                        if success_pre_reserve or save_round >= 3 or cnt_recv >= 777:  # 抢座成功或者抢座超过3轮直接退出
                             break
                     except Exception as e:
                         print(e)
@@ -228,7 +229,7 @@ if __name__ == '__main__':
     print('🌠我去图书馆程序，启动！🌠 ', time.ctime())
     print(f"currently {len(user_list)} users active")
     User.keep_session(user_list)  # 先进行一次session刷新，避免开始的三五分钟内失效
-    schedule.every(4 * 60 + random.randint(-60, 60)).seconds.do(run_thread, param_dict={
+    schedule.every(3 * 60 + random.randint(-10, 20)).seconds.do(run_thread, param_dict={
         'func': User.keep_session,  # 每3~5分钟刷新cookie, 保活session
         'user_list': user_list
     })

@@ -10,7 +10,7 @@ import warnings
 from utils_params import *
 import User
 
-cookie = "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjM2Mjg5NjEzLCJzY2hJZCI6MTAwMjUsImV4cGlyZUF0IjoxNjk5MjgyMjA4fQ.RgJgryvT857HQmYY7Qb115sJfeaFxdHLMIoDhdl29NhHrnGDNV9pSLoAXskQmDTo7vOPaq1bEs2JivOLjpWfjBbjk_zstbK1TqQ0OtU27nQaBIJbg4yubGRMCMqLed5UmoREC_5Yd87BIvhyMIDZyhd30Srf4IyCE9D1x7pNJSt7RnAdLYMmgXETtP5T28X_dJUTnN0G-nTBmIOEuiNYapyWZ0YbQKOkvWJJLx6zB-5jgDR174ESZ_JTeN74blQl598gazdEynu2pcMu_tOYDm8epKYiwjLjJC1BGMEJSLxBvICg5_RBd5RutXIB5fdgn9aqqNGa7tnAXETu_CfO0Q; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|replaceMe|1699275008"
+cookie = "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMzNTA3NDIxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTcwMDEzNzg2NX0.h9bsTUMJigbfHn-hNXuchn1BX23fJbkOZ47rUUG17diUSi6F2GqDV9wqUSD4u8dd9eyd3cHJxhdohodLHOp5NySddcL-bhZan_xrS8gJy93L8HRqM4OpeQHGEglueOmrGef1QjAUco16gmWW5eNdP78bIhf3Y6znxr1Kbcl9_h57wTrkUltMZACDf5Oky1qMTF9-KMttcltuxA63U9CdLHfXhPgtsEWkP8zfMKzRYSsj2H40xoDYNYyKDRKmymvV7QTLLcuCmSDi3rSKlgsW2Yh_KSf0wQHomjOqCzaYexpT-T8kOlMemXJPocwaPMrIjYOb63XzJdBry1vkbB2o9g; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1700133751|1699969589"
 
 def get_index():
     index_operation = {
@@ -51,7 +51,7 @@ def lib_layout():
         "operationName": "libLayout",
         "query": "query libLayout($libId: Int!) {\n userAuth {\n prereserve {\n libLayout(libId: $libId) {\n max_x\n max_y\n seats_booking\n seats_total\n seats_used\n seats {\n key\n name\n seat_status\n status\n type\n x\n y\n }\n }\n }\n }\n}",
         "variables": {
-            "libId": 10086
+            "libId": 11124
         }
     }
     session = requests.session()
@@ -61,7 +61,7 @@ def lib_layout():
 
 if __name__ == '__main__':
     headers['Cookie'] = cookie
-    get_index()
+    lib_layout()
     # with open('init_conf.json', 'r', encoding='utf-8') as fp:
     #     usr_list = json.loads(fp.read())['users']
     # headers['Cookie'] = cookie
