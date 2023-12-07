@@ -40,7 +40,7 @@ class CG_Client(WebSocketClient):
                 if time.time() > self.queue_end_time:
                     self.send('{"ns":"prereserve/queue","msg":""}')
                     self.sent += 1
-                    print(self.sent, f'{self.user_name} >>> msg2', time.time())
+                    print(self.sent, f'{self.user_name} >>> msg', time.time())
                     break
 
     def closed(self, code, reason=None):

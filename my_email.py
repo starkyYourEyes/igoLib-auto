@@ -8,6 +8,7 @@ from email.header import Header
 import requests
 from lxml import etree
 
+
 ua_pool = [
     'Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.4) Gecko/20100503 Firefox/3.6.4 ( .NET CLR 3.5.30729)',
     'Mozilla/5.0 (Windows; U; Windows NT 5.1; nb-NO; rv:1.9.2.4) Gecko/20100611 Firefox/3.6.4 (.NET CLR 3.5.30729)',
@@ -15,6 +16,7 @@ ua_pool = [
     'Mozilla/5.0 (X11; U; Linux x86_64; fr; rv:1.9.2.3) Gecko/20100403 Fedora/3.6.3-4.fc13 Firefox/3.6.3',
     'Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.2.3) Gecko/20100401 SUSE/3.6.3-1.1 Firefox/3.6.3'
 ]
+festival = []
 
 
 def daily_poem():
@@ -36,6 +38,24 @@ def daily_poem():
     }
 
 
+def festival_to_come():
+    global festival
+    classical_fes = ['元旦', '春节', '清明节', '劳动节', '五四青年节', '高考', '端午节', '母亲节', '父亲节', '中秋节', '国庆节']
+    tree = etree.HTML(requests.get(
+        url='https://www.daojishi321.com/',
+        headers={
+            'User-Agent': ua_pool[random.randint(0, len(ua_pool) - 1)]
+        }
+    ).text)
+    fes = tree.xpath("/html/body/div[1]/div[2]/div/div[3]/div[2]/ul/li")
+    for li in fes:
+        name = li.xpath("./div/div[1]/a/text()")[0]
+        if name in classical_fes:
+            t = li.xpath("./div/div[2]/div/span[1]/text()")[0]
+            assert name is not None and name != '' and t is not None and t != ''
+            festival = [name, t]
+            break
+
 # smtplib模块主要负责发送邮件：是一个发送邮件的动作，连接邮箱服务器，登录邮箱，发送邮件（有发件人，收信人，邮件内容）。
 # email模块主要负责构造邮件：指的是邮箱页面显示的一些构造，如发件人，收件人，主题，正文，附件等。
 def goLib_email_info(msg, mail_content='default info', receiver=None):
@@ -45,11 +65,11 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
         print(receiver, "this receiver string is invalid qqmail address!")
         receiver = '2389372927@qq.com'
 
-    time.sleep(6 * random.random())
+    time.sleep(3 * random.random())
     host_server = 'smtp.qq.com'  # qq邮箱smtp服务器
 
-    sender_qq = '2389372927@qq.com'  # 发件人邮箱 2389372927@qq.com
-    pwd = 'omnafobylbzfeaci'  # 2389372927 smtp 密钥
+    sender_qq = '1702305010@qq.com'  # 发件人邮箱 2389372927@qq.com
+    pwd = 'xzzuywjvscmzehae'  # omnafobylbzfeaci smtp 密钥
 
     mail_title = '你去图书馆——明日预约'  # 邮件标题
     seat_info = '预约信息: '
@@ -60,7 +80,17 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
         seat_info = ''
 
     if msg == 'success':
-        con = daily_poem()
+        try:
+            con = daily_poem()
+        except Exception as e:
+            con = {
+                'content': '',
+                'title': '',
+                'author': '',
+                'date': ''
+            }
+            print('error in daily poem!')
+            print(e)
         con['content'] = con['content'].replace(f'\r\n', '<br>')
         mail_content = f"""
         <html class="h-screen " lang="zh-">
@@ -86,9 +116,13 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
           <div style="text-align:center; font-size:18px; font-family:Simsun,serif">
             {con['content']}
           </div>
-        </div>
+        </div>          
+        <br>
         </html>
         """  # 邮件正文内容
+        # <div style="font-size:16px; text-align: right; font-family:STZhongsong">
+        #     距离{festival[0]}还有{festival[1]}天
+        # </div>
     elif msg == 'fail':
         mail_title = '我去图书馆——明日预约失败'
         mail_content = "糟糕，本次预约失败了呢。。。"  # 邮件正文内容
@@ -117,7 +151,8 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
 
 
 if __name__ == '__main__':
-
+    # festival_to_come()
+    festival_to_come()
     goLib_email_info('success', '123')
     time.sleep(0.4)
     # goLib_email_info('success', '123')

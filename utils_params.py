@@ -44,16 +44,6 @@ def fetch_cookie_string():
     return cookie_string
 
 
-"""nau"""
-# the_lib_chosen = [491]  # 1st floor
-# #                    70号    49号      38号
-# the_seat_chosen = ['17,6', '11,17', '17,18']  # demo, 17, 6 => 70
-"""HUEL"""
-# the_lib_chosen = [10086]  # want
-# the_seat_chosen = ['24,15', '20,15', '14,16', '24,16', '22,15']  # seat want
-# the_lib_chosen = [11082]  # demo
-# the_seat_chosen = ['9,13', '10,7', '11,7', '11,13', '13,11']  # demo
-
 url = 'https://wechat.v2.traceint.com/index.php/graphql/'
 
 headers = pre_header = {
@@ -128,7 +118,7 @@ save_operation = {
     }
 }
 # libLayout oops, be careful when change and use this param, 多线程！临界资源！
-libLayout_operation = {
+libLayout_operation = { # 注意这个参数里面有一个 preresserve ——说明请求的是明日预约的座位状态。
     "operationName": "libLayout",
     "query": "query libLayout($libId: Int!) {\n userAuth {\n prereserve {\n libLayout(libId: $libId) {\n max_x\n "
              "max_y\n seats_booking\n seats_total\n seats_used\n seats {\n key\n name\n seat_status\n status\n type\n "
@@ -137,6 +127,7 @@ libLayout_operation = {
         "libId": 10086
     }
 }
+
 getUserCancleConfig_operation = {
     "query": 'query getUserCancleConfig { userAuth { user { holdValidate: getSchConfig(fields: "hold_validate", extra: true) } } }',
     "variables": {},

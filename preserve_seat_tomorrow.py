@@ -71,55 +71,62 @@ def initialization():
     print('============================================================================')
 
 
-def seat_save(open_time, user):
+def seat_save(open_time, user, save_round):
     queue_end = time.time()
     print(f'{user.name} 本次排队消耗时间:', queue_end - open_time)
-    if time.time() - open_time >= 5:  # for henan # ?????
-        my_libLayout_operation = copy.deepcopy(libLayout_operation)
-        my_libLayout_operation['variables']['libId'] = user.lib_id
-        user.session.post(
-            url=url,
-            json=my_libLayout_operation,  # libLayout
-            verify=False
-        )
-        print(f'{user.name} time in libLayout_operation:', time.time() - queue_end)
-    try:
-        # save_operation['variables']['libid'] = user.lib_id
-        my_save_operation = copy.deepcopy(save_operation)
-        my_save_operation['variables']['libid'] = user.lib_id
-        for seat in user.seats:
-            my_save_operation['variables']['key'] = seat + '.'
-            text_save = user.session.post(  # 抢座的post请求，core code
-                url=url,
-                json=my_save_operation,  # save
-                verify=False
-            ).text
-            save_end = time.time()
-            print('save end:', save_end)
-            text_res = user.session.post(
-                url=url,
-                json=prereserve_operation,  # prereserve
-                verify=False
-            ).text
-            print(f'{user.name} 抢座过程消耗时间:{save_end - queue_end}')
-            print(time.ctime(), 'pre reserve:',
-                  str(text_res).encode('utf-8').decode('unicode_escape'))
-            print(time.ctime(), 'save       :',
-                  str(text_save).encode('utf-8').decode('unicode_escape'))
-            if text_res.count('user_mobile'):
-                print(f"😍恭喜 {user.name}！明日预约成功！记得早起")  # 抢座成功就返回
-                try:
-                    my_email.goLib_email_info('success', json.loads(text_res), user.email)
-                except Exception as e:
-                    print(e)
-                    print(f'{user.name} 获取每日诗词失败或发送邮件失败。。。')
-                return True
-            else:
-                time.sleep(1)
-    except Exception as e:
-        time.sleep(0.3)
-        print(e)
-    return False
+
+    # if time.time() - open_time >= 8:  # for henan # ?????
+    my_libLayout_operation = copy.deepcopy(libLayout_operation)
+    my_libLayout_operation['variables']['libId'] = user.lib_id
+    seats_info = user.session.post(
+        url=url,
+        json=my_libLayout_operation,  # libLayout
+        verify=False
+    ).json()
+    print(f'{user.name} time in libLayout_operation:', time.time() - queue_end)
+
+    if save_round < 2:
+        try:
+            # save_operation['variables']['libid'] = user.lib_id
+            my_save_operation = copy.deepcopy(save_operation)
+            my_save_operation['variables']['libid'] = user.lib_id
+            for seat in user.seats:
+                my_save_operation['variables']['key'] = seat + '.'
+                text_save = user.session.post(  # 抢座的post请求，core code
+                    url=url,
+                    json=my_save_operation,  # save
+                    verify=False
+                ).text
+                save_end = time.time()
+                print('save end:', save_end)
+                text_res = user.session.post(
+                    url=url,
+                    json=prereserve_operation,  # prereserve
+                    verify=False
+                ).text
+                print(f'{user.name} 抢座过程消耗时间:{save_end - queue_end}')
+                print(time.ctime(), 'pre reserve:',
+                      str(text_res).encode('utf-8').decode('unicode_escape'))
+                print(time.ctime(), 'save       :',
+                      str(text_save).encode('utf-8').decode('unicode_escape'))
+                if text_res.count('user_mobile'):
+                    print(f"😍恭喜 {user.name}！明日预约成功！记得早起")  # 抢座成功就返回
+                    try:
+                        my_email.goLib_email_info('success', json.loads(text_res), user.email)
+                    except Exception as e:
+                        print(e)
+                        print(f'{user.name} 获取每日诗词失败或发送邮件失败。。。')
+                    return True
+                else:
+                    time.sleep(1)
+        except Exception as e:
+            time.sleep(0.3)
+            print(e)
+        return False
+
+    else:           # todo TODO
+        print(seats_info)
+        pass
 
 
 async def queue_pass_websockets(open_time, user):
@@ -171,7 +178,7 @@ async def queue_pass_websockets(open_time, user):
                         print(cnt_recv, f'{name} <<<', ans, time.time())
                         if ans.__contains__('u6392'):
                             """\u6392排好队的返回， \u6210已经抢完座的返回"""
-                            success_pre_reserve = seat_save(open_time, user)
+                            success_pre_reserve = seat_save(open_time, user, save_round)
                             save_round += 1
                             print('🎵round', save_round, 'end')
                         elif ans.__contains__('u6210'):

@@ -66,22 +66,34 @@ def initialization():
     print('============================================================================')
 
 
-def seat_save(open_time, user):
+def seat_save(open_time, user, save_round):
     queue_end = time.time()
     print(user.name, '本次排队消耗时间:', queue_end - open_time)
-    if time.time() - open_time >= 8:  # for henan # ?????
-        my_libLayout_operation = copy.deepcopy(libLayout_operation)
-        my_libLayout_operation['variables']['libId'] = user.lib_id
-        user.session.post(
-            url=url,
-            json=my_libLayout_operation,  # libLayout
-            verify=False
-        )
-        print('time in libLayout operation:', time.time() - queue_end)
+
+    # if time.time() - open_time >= 8:  # for henan # ?????
+    my_libLayout_operation = copy.deepcopy(libLayout_operation)
+    my_libLayout_operation['variables']['libId'] = user.lib_id
+    seats_info = user.session.post(
+        url=url,
+        json=my_libLayout_operation,  # libLayout
+        verify=False
+    ).json()
+    print('time in libLayout operation:', time.time() - queue_end)
+    my_save_operation = copy.deepcopy(save_operation)
+    my_save_operation['variables']['libid'] = user.lib_id
+
+    if save_round < 2:
+        all_seats = user.seats
+    else:    # 第一轮抢不到，说明设置的座位已经被抢完了，只能捡漏了
+        all_seats = seats_info['data']['userAuth']['prereserve']['libLayout']['seats']
     try:
-        my_save_operation = copy.deepcopy(save_operation)
-        my_save_operation['variables']['libid'] = user.lib_id
-        for seat in user.seats:
+        for seat in all_seats:
+            if save_round < 2:
+                seat = seat + '.'
+            elif seat['name'] is not None and not seat['status']:
+                seat = seat['key'] + '.'
+            else:
+                continue
             my_save_operation['variables']['key'] = seat + '.'
             text_save = user.session.post(  # 抢座的post请求，core code
                 url=url,
@@ -105,8 +117,8 @@ def seat_save(open_time, user):
                 try:
                     my_email.goLib_email_info('success', json.loads(text_res), user.email)
                 except Exception as e:
+                    print(f'{user.name}, 发送邮件失败。。。')
                     print(e)
-                    print(f'{user.name}, 获取每日诗词失败或发送邮件失败。。。')
                 return True
             else:
                 time.sleep(1)
@@ -160,7 +172,7 @@ def preserve_tomorrow(user: User):
                 ws.connect()
                 ws.run_forever()
                 save_round += 1
-                save_success = seat_save(open_time, user)
+                save_success = seat_save(open_time, user, save_round)
             except Exception as e:
                 cnt_except += 1
                 print(e)
