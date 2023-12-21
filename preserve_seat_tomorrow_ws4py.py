@@ -1,4 +1,6 @@
 import functools
+import time
+
 import schedule
 from threading import Thread
 from my_socket import *
@@ -44,8 +46,8 @@ def initialization():
         all_seats = user.session.post(
             url=url, json=libLayout_operation, verify=False
         ).json()
-        assert all_seats is not None
-        assert all_seats['data']['userAuth'] is not None
+        assert all_seats is not None and all_seats['data']['userAuth'] is not None
+
         all_seats = all_seats['data']['userAuth']['prereserve']['libLayout']['seats']
         my_seat_list = []
         for my_seat in user.seats:
@@ -69,8 +71,6 @@ def initialization():
 def seat_save(open_time, user, save_round):
     queue_end = time.time()
     print(user.name, '本次排队消耗时间:', queue_end - open_time)
-
-    # if time.time() - open_time >= 8:  # for henan # ?????
     my_libLayout_operation = copy.deepcopy(libLayout_operation)
     my_libLayout_operation['variables']['libId'] = user.lib_id
     seats_info = user.session.post(
@@ -132,6 +132,15 @@ def preserve_tomorrow(user: User):
     # 更新为当日抢座时间,open_time -> 时间戳
     open_time = time.mktime(
         time.strptime(time_update(user.pre_reserve_time), "%Y-%m-%d %H:%M:%S"))
+    index_info = user.session.post(
+        url=url, json=index_operation, verify=False
+    ).json()
+    try:
+        if index_info['data']['userAuth']['currentUser']['user_deny']['deny_deadline'] is not None:
+            print(f'黑名单用户！{user.name}')
+            return
+    except Exception as e:
+        print(e)
     print(f'🙏{user.name} 明日预约初始化完成！')
     print('当前时间', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())), end=', ')
     print(f'{user.name} 还有%f秒开始' % (open_time - time.time()))
@@ -157,9 +166,10 @@ def preserve_tomorrow(user: User):
                     }
                 )
                 # ws.open_time = open_time
-                ws.queue_start_time = open_time - 0.6
-                ws.queue_end_time = open_time + 0.1
+                queue_start_time = open_time - 1
+                ws.queue_end_time = open_time + 1
                 ws.user_name = user.name
+                ws.exp = False
                 my_libLayout_operation = copy.deepcopy(libLayout_operation)
                 my_libLayout_operation['variables']['libId'] = user.lib_id
                 print(f"name:{user.name}, lib_id:{user.lib_id}, seats:{user.seats}")
@@ -169,8 +179,13 @@ def preserve_tomorrow(user: User):
                     verify=False
                 )
                 print(user.name, '明日预约距离开始还有:', open_time - time.time())
+                while time.time() <= queue_start_time:
+                    pass
                 ws.connect()
                 ws.run_forever()
+                if ws.exp:
+                    raise Exception(f'{user.name}: 获取用户信息失败/用户信息异常')
+
                 save_round += 1
                 save_success = seat_save(open_time, user, save_round)
             except Exception as e:

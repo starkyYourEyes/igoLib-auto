@@ -20,21 +20,20 @@ queue_header = [
 
 
 class CG_Client(WebSocketClient):
-
     # open_time = None
-    queue_start_time = None
     queue_end_time = None
     user_name = None
-    sent, revc = 0, 0
+    sent, recv = 0, 0
+    exp = False
 
     def opened(self):
         while True:  # 到达开始排队的时间以及持续排队的时间
-            while self.queue_start_time <= time.time() <= self.queue_end_time:
+            while time.time() <= self.queue_end_time:
                 # 连发，在open_time的前后0.n s内持续发送排队消息。
                 self.send('{"ns":"prereserve/queue","msg":""}')
                 self.sent += 1
                 print(self.sent, f'{self.user_name} >>> msg1', time.time())
-                time.sleep(0.03)
+                time.sleep(0.05)
             else:
                 # 持续时间过了之后，每次只发送一次消息
                 if time.time() > self.queue_end_time:
@@ -48,11 +47,15 @@ class CG_Client(WebSocketClient):
 
     def received_message(self, resp):
         resp_msg = str(resp)
-        self.revc += 1
+        self.recv += 1
         self.sent -= 1
-        print(self.revc, f'{self.user_name} <<<', resp_msg, time.time())
-        if resp_msg.find('u6392') != -1 or self.revc >= 666:  # 排队成功返回的第一个字符
+        print(self.recv, f'{self.user_name} <<<', resp_msg, time.time())
+        if resp_msg.find('u6392') != -1 or self.recv >= 666:  # 排队成功返回的第一个字符
             print('queue over')
+            self.close()
+        elif resp_msg.find('u83b7') != -1:
+            print(f'{self.user_name}: 获取用户信息失败')
+            self.exp = True
             self.close()
         # elif resp_msg.find('u6210') != -1:  # 已经抢座成功的返回
         #     print("rsp msg:{}".format(json.loads(resp_msg)["msg"]))
