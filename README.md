@@ -36,6 +36,6 @@ just save
 ### v5.2
 - skip users in blacklist
 - if not get the seat users want, just begin to scan the lib_layout list and choose the seat nobody choose
-
+- if unexpected Exception occurs when in queue(for example: 获取用户信息失败/用户信息异常), end the queue early to try another queue.
 ### todo
 - to complete functions in my_email.py
