@@ -32,6 +32,8 @@ just save my code, ready for another new version
 this version just seek for stability  
 well, the result is not that good. I am still being troubled by the SSL problem mentioned in version v4.1 :(
 ### v5.1
+just save
+### v5.2
 - skip users in blacklist
 - if not get the seat users want, just begin to scan the lib_layout list and choose the seat nobody choose
 
