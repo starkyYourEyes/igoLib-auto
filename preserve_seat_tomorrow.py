@@ -195,7 +195,7 @@ async def queue_pass_websockets(open_time, user):
                         time.sleep(0.8)
                 break  # 跳出外层循环
     if not success_pre_reserve:
-        my_email.goLib_email_info('fail', receiver='2389372927@qq.com')
+        my_email.goLib_email_info('fail', receiver='927@qq.com')
 
 
 def preserve_tomorrow(user: User):
