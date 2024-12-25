@@ -59,17 +59,17 @@ def festival_to_come():
 # smtplib模块主要负责发送邮件：是一个发送邮件的动作，连接邮箱服务器，登录邮箱，发送邮件（有发件人，收信人，邮件内容）。
 # email模块主要负责构造邮件：指的是邮箱页面显示的一些构造，如发件人，收件人，主题，正文，附件等。
 def goLib_email_info(msg, mail_content='default info', receiver=None):
-    receiver = receiver if receiver is not None and receiver.strip(' ') != "" else '2389372927@qq.com'
+    receiver = receiver if receiver is not None and receiver.strip(' ') != "" else '927@qq.com'
     regex = re.compile(r'[1-9]\d+@qq.com')  # 默认为qq邮箱
     if not re.fullmatch(regex, receiver):
         print(receiver, "this receiver string is invalid qqmail address!")
-        receiver = '2389372927@qq.com'
+        receiver = '927@qq.com'
 
     time.sleep(3 * random.random())
     host_server = 'smtp.qq.com'  # qq邮箱smtp服务器
 
-    sender_qq = '1702305010@qq.com'  # 发件人邮箱 2389372927@qq.com
-    pwd = 'xzzuywjvscmzehae'  # omnafobylbzfeaci smtp 密钥
+    sender_qq = '170@qq.com'  # 发件人邮箱 
+    pwd = ''  #  smtp 密钥
 
     mail_title = '你去图书馆——明日预约'  # 邮件标题
     seat_info = '预约信息: '
@@ -132,7 +132,7 @@ def goLib_email_info(msg, mail_content='default info', receiver=None):
     elif msg == 'SessionError':
         mail_title = '我去图书馆——cookie失效'
         mail_content = """
-        <img src="https://img.ikarox.cn/i/2023/10/09/ne4902.png"></img>
+        <img src=""></img>
         """
     else:
         mail_content = 'unknown message'
