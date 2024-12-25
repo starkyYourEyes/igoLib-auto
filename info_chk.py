@@ -10,9 +10,8 @@ import warnings
 from utils_params import *
 import User
 
-# cookie = "SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1702901564|1701431821; Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjM5NTQ1NDc0LCJzY2hJZCI6MTAxLCJleHBpcmVBdCI6MTcwMjkwNTgzN30.Pxc_E4t3nxc2Wj9LW9jF9iIUwNiOsslNG9UuK6eXg31A9NbXfsSg0o70VoQyhWexLKS-ZCmUuOvmi0adqklrVWaO5q8wUsKCh_lMjDWWl0UQJsng7Zoe8DNkNR9v9wLTrRx3THA1R8r9-J-z4IyTY0OJIO4-qhVQqnqWSFjV8IK74lTk_9s0TOmsOveFzKK3REphRkONbAuaM5bcc5zuoOF7dJ4ivc_ugK_VAgoiZD7fqsNcZjjmTe6tL3F8Rs05MAfl4i4q1W8aW3Y1JEWA4ww8Ztt9RFHxeaQBPO7P5cS7vMaUjWJ5j3TgpYARkVwrXe0rLC01yKQGIqOczgPjiQ"
-cookie = "SERVERID=d3936289adfff6c3874a2579058ac651|1702901566|1701431821; Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjM5MzM5MjI2LCJzY2hJZCI6MTAxLCJleHBpcmVBdCI6MTcwMjkwODA2M30.DyEYPSCU6NROqEnB_Uw-GuWW4WB_ArK5GrPSI0PW9XOlurKedgPD4-4vXEGL42WfiJV1o-RaFxGXp1zqZheBOIUX81P_OsUbha5jORqkxH92WWLJJBYj_eyFtVhjt56okd1Aqt1t198ZtYhZCyw2PH4XDgdGy-1epQdgjXwfYPzU2BgWkceE-VhyqpLfqRmXDMljEK4UPRwfkickxrrD8d2ZvftFdD3dD8YMqUvi_XQzQV3kn2FB3H3f78-r5HVIbhm39JBZQwNKxSzY05QNHPetlkTeush2snzJxaxtc3DHmpBwDv9bWgJ-kzgzuiq2-lOSZI-Ps0dwGDEWJl26bQ"
-lib_id = 123413
+cookie = ""
+lib_id = 12345
 
 def get_index():
     index_operation = {
@@ -66,53 +65,3 @@ if __name__ == '__main__':
     get_index()
     libs_info()
     lib_layout()
-    # with open('init_conf.json', 'r', encoding='utf-8') as fp:
-    #     usr_list = json.loads(fp.read())['users']
-    # headers['Cookie'] = cookie
-    # print(cookie)
-    # usr_list[1]['session'] = requests.session()
-    # usr_list[1]['session'].headers.update(headers)
-    #
-    # cookie = http.cookies.SimpleCookie()
-    # cookie.load(usr_list[1]['cookie'])
-    # for key, morsel in cookie.items():
-    #     usr_list[1]['session'].cookies.set(key, morsel)
-    #
-    # res = usr_list[1]['session'].post(url=url, json=index_operation, verify=False)
-    #
-    # usr_list[1]['session'].headers = res.request.headers
-    # print(usr_list[1]['session'].cookies)
-    # new_cookie = requests.utils.dict_from_cookiejar(usr_list[1]['session'].cookies)
-    # print(new_cookie)
-    #
-    # if usr_list[1]['session'].cookies.keys().count("Authorization") > 1:
-    #     usr_list[1]['session'].cookies.set("Authorization", domain="", value=None)
-    # print(User.User.cookie_dict_to_str_with_equal(
-    #     requests.utils.dict_from_cookiejar(usr_list[1]['session'].cookies)
-    # ))
-    # # cookie = http.cookies.SimpleCookie()
-    # # cookie.load(usr_list[1]['cookie'])
-    # # for key, morsel in cookie.items():
-    # #     usr_list[1]['session'].cookies.set(key, morsel)
-    #
-    # print(User.User.cookie_dict_to_str_with_equal(
-    #     requests.utils.dict_from_cookiejar(usr_list[1]['session'].cookies)
-    # ))
-
-    #
-    # print(session.cookies, type(session.cookies))
-    # print(res.request.headers['Cookie'],  type(res.request.headers['Cookie']))
-    # res2 = session.post(url=url, json=index_operation, verify=False)
-    # session.headers.clear()
-    # # session.headers.update(res2.request.headers['Cookie'])
-    #
-    # print(res.json())
-    # print(res2.json())
-    # print(usr_list[0]['session'] == session)
-    # session = requests.session()
-    # print('session', session.headers)
-    # print("usr_list[0]['session']", usr_list[0]['session'].headers)
-    # print(session.headers == usr_list[0]['session'].headers)
-    # # libs_info()
-    # # lib_layout()
-    # # get_index()
