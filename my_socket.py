@@ -69,7 +69,7 @@ class CG_Client(WebSocketClient):
 
 if __name__ == '__main__':
     ws = None
-    cookie = 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjM0Mzc3NTkxLCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5OTE5MzUxMX0.v-mTMsWbFrMQ1H7jv-zQmxD41mfqwy4sEfMt0FL6_LJfScrH9RwIdfwavyW5cOjkEOG_-oXooXzFvbLLiXYaVAibHHC7GjqAqoaP5hAkMDYcTiCPK5FMblDGuAOzWZN66a9gcdnL9wR0Vpe5MFZBGxf8kLM0Lqk-jgCdjgMRL5N1QamyD9yOp5kUiuI8YiCjMzLZ1T_pW85QHRoRidTtP-icwa251r5ghSbWsMiYlBqSax9vZM3D3Tj3f77kWi5VvJdvXzeSs8bUAu4ScHTo4Hn1i5wM8gUqfzTfJzgwX5JtyF0k5_3Tc3OcthVavvtEpDWDDYP3Jg-xWTh3ZRWsmQ; SERVERID=e3fa93b0fb9e2e6d4f53273540d4e924|1699186316|1699186310'
+    cookie = ''
 
     try:
         queue_header.append(('Cookie', cookie))
