@@ -200,7 +200,7 @@ def preserve_tomorrow(user: User):
     print(user.name, time_update().split(' ')[0] + "的抢座结束！")
 
     if not save_success:
-        my_email.goLib_email_info('fail', receiver='2389372927@qq.com')
+        my_email.goLib_email_info('fail', receiver='@qq.com')
 
 
 @catch_exceptions(cancel_on_failure=True)
