@@ -14,7 +14,7 @@ queue_header = [
     ('Accept-Encoding', 'gzip, deflate, br'),
     ('Accept-Language', 'zh-CN,zh'),
     ('Sec-WebSocket-Extensions', 'permessage-deflate; client_max_window_bits'),
-    # ('Sec-WebSocket-Key', 'J5PSBxALx6TJAVyRXIhl0g=='), # 这个东西是socket通信自带的，不需要自己加
+    # ('Sec-WebSocket-Key', '9999=='), # 这个东西是socket通信自带的，不需要自己加
     ('Sec-WebSocket-Version', '13')
 ]
 
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     #     'Accept-Language': 'zh-CN,zh',
     #     # 'Sec-WebSocket-Key': 'h/hkRDGbwZ1VCVfpL54B8w==',
     #     'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits',
-    #     'Cookie': 'Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjMyNjcxMzA3LCJzY2hJZCI6MTI1LCJleHBpcmVBdCI6MTY5NzQ3MTU0MH0.YxF4qJF0xzQdpa6OUcaEEJHyWK9hlT5nh66QGFjpqUFFuXJ03YMToFdfy_-GSyUez45ggPq1QU-eho54gnjTrEzI67Ra_2GNxkq1SPaXIMqIiYXZQ-s41Znuq0KFVd2HEYIN6cjfp1mQcS5_BjKUCZIKcEO0UTywJ9WYqfCI7Q_Kti5p7Gug9NFEzVqJfhqC2ey8CHQYajyd-OIHvYhS61RO5mUZWgESPTPE-L6P2d18HE--lUUPJiJCYxqHPifzUIhpQAytak3RplgEWhyW5_HPa_goD0WgGUS8FyjVTd_YU6yASVyFzElRitRiawilU_eUKV5AfubC9Zqj8rpuBQ; SERVERID=82967fec9605fac9a28c437e2a3ef1a4|1697466072|1697462331; SERVERID=d3936289adfff6c3874a2579058ac651|1696832980|1696832980'
+    #     'Cookie': 'Autc387432980'
     # }
     # start = time.time()
     # ws = websocket.create_connection('wss://wechat.v2.traceint.com/ws?ns=prereserve/queue',
