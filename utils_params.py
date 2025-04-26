@@ -25,7 +25,6 @@ def fetch_cookie_string():
         raise ValueError("Code not found in URL")
     # url = 'http://wechat.v2.traceint.com/index.php/graphql/?operationName=index&query=query%7BuserAuth%7BtongJi
     # %7Brank%7D%7D%7D&code=011Kkf1w3ryUo13m3L3w3JVWZD3Kkf19&state=1'
-    # https://open.weixin.qq.com/connect/oauth2/authorize_reply?allow=1&snsapi_userinfo=on&uuid=051Jasrd2Qq8ll2N&uin=MTk5OTcxODc2Nw==&key=97425fa9372e684cbc377feee88263b96a58753c00f9e76b84974526c9f86722ad599b79577c95d97c01fdbbd122961e33bb5f61d37f6d0492c26839d131ef86da09f55d25abde66f7d59173f3a29bd0bd09a83abec77e90432b9441b6f1c1c6a2a1a6795e101d705d2596844793f1dc925a2fb406d228d0dc8af69db0a84b63&pass_ticket=UOi%2FfyJLvq3P6gaaxTrkBEj9F8LympSfaB4SovrHBdyaD7a8ap%2BycrdOVpeYPmN8wwnO9dJvq%2B5lkhLdhTVlWQ%3D%3D&version=6309071d
     cookiejar = http.cookiejar.MozillaCookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar))
     response = opener.open(
@@ -76,7 +75,7 @@ queue_header_for_websockets = {
     'Sec-WebSocket-Version': '13',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'zh-CN,zh',
-    # 'Sec-WebSocket-Key': 'h/hkRDGbwZ1VCVfpL54B8w==',
+    # 'Sec-WebSocket-Key': 'h/==',
     'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits',
     'Cookie': '***'
 }
